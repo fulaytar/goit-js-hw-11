@@ -65,3 +65,26 @@ button{
 button:hover{
     background-color: rgb(108, 140, 255);;
 }
+.gallery{
+    display: flex;
+    gap:24px;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+}
+.item-gallery{
+    border: 1px solid rgb(128, 128, 128);
+}
+.load-list{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    color: rgb(46, 47, 66);
+    font-family: Montserrat;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.33;
+    letter-spacing: 0.04em;
+    row-gap: 28px;
+}
