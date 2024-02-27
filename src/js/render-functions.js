@@ -23,6 +23,11 @@ function searchBtn(event) {
   form.elements.input.value = "";
   //перевірка інпута
   if (query === "") {
+    iziToast.error({
+    title: 'Error',
+    message: 'Enter a value',
+    position: 'topRight',
+            })
         return;
     }
   //тут очищаю перед заповненням
