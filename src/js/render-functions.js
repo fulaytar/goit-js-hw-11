@@ -72,6 +72,7 @@ function searchBtn(event) {
         </li>`).join('');
       const lightbox = new SimpleLightbox('.gallery>.item-gallery a', {
         //* options */
+        backgroundColor: '#EF4040',
         captionsData: `alt`,
         captionDelay: 250,
       });
