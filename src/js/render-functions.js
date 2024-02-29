@@ -13,14 +13,55 @@ const form = document.querySelector('#form');
 const loader = document.querySelector('div');
 const gallery = document.querySelector('.gallery');
 
-form.addEventListener("submit", searchBtn);
+//використовую бібліотеку
+const lightbox = new SimpleLightbox('.gallery>.item-gallery a', {
+        //* options */
+        backgroundColor: '#EF4040',
+        captionsData: `alt`,
+        captionDelay: 250,
+});
+      
+//навішую подію
+form.addEventListener("submit", searchImages);
 
-function searchBtn(event) {
+//функція яка відмальовує сторінку
+function addImagesMarcup(largeImageURL, webformatURL, tags, likes, views, comments, downloads) {
+  return  `
+  <li class="item-gallery">
+    <a class="load-link" href="${largeImageURL}">
+      <img class="load-image" src="${webformatURL}" width="360" alt="${tags}" title="${tags}">
+    </a>
+    <ul class="load-list">
+      <li>
+        <h2>Likes</h2>
+        <p>${likes}</p>
+      </li>
+      <li>
+        <h2>Views</h2>
+        <p>${views}</p>
+      </li>
+      <li>
+        <h2>Comments</h2>
+        <p>${comments}</p>
+      </li>
+      <li>
+        <h2>Downloads</h2>
+        <p>${downloads}</p>
+      </li>
+    </ul>
+  </li>
+`;
+}
+
+//обробка кліка
+function searchImages(event) {
   event.preventDefault();
   //зберігаю значення інпута
   const query = form.elements.input.value.trim();
+
   //очистка інпута
   form.elements.input.value = "";
+
   //перевірка інпута
   if (query === "") {
     iziToast.error({
@@ -32,12 +73,10 @@ function searchBtn(event) {
     }
   //тут очищаю перед заповненням
   gallery.innerHTML = '';
+
   //включаю лоадер
   loader.classList.add('spinner');
-
-  //відмальовую
-  setTimeout(() => {
-    loader.classList.remove('spinner')
+  
     //пішла обробка
     imageSearch(query).then(response => {
         if(response.hits.length === 0){
@@ -46,43 +85,14 @@ function searchBtn(event) {
     message: 'Sorry, there are no images matching your search query. Please try again!',
     position: 'topRight',
             });
-        }
-      gallery.innerHTML = response.hits.map(element => `<li class="item-gallery">
-          <a class="load-link" href="${element.largeImageURL}"
-            ><img
-            class="load-image"
-              src="${element.webformatURL}"
-              width="360"
-              alt="${element.tags}"
-              title="${element.tags}"
-          /></a>
-          <ul class="load-list">
-            <li>
-              <h2>Likes</h2>
-              <p>${element.likes}</p>
-            </li>
-            <li>
-              <h2>Views</h2>
-              <p>${element.views}</p>
-            </li>
-            <li>
-              <h2>Comments</h2>
-              <p>${element.comments}</p>
-            </li>
-            <li>
-              <h2>Downloads</h2>
-              <p>${element.downloads}</p>
-            </li>
-          </ul>
-        </li>`).join('');
-      const lightbox = new SimpleLightbox('.gallery>.item-gallery a', {
-        //* options */
-        backgroundColor: '#EF4040',
-        captionsData: `alt`,
-        captionDelay: 250,
-      });
+      }
+      //відмальовую
+      gallery.innerHTML = response.hits.map(item => addImagesMarcup(item.largeImageURL, item.webformatURL, item.tags, item.likes, item.views, item.comments, item.downloads)).join('');
+
       //метод рефреш
       lightbox.refresh();
-    }).catch(error => console.log(error))
-  }, 500)
+    }).catch(error => console.log(error)).finally(() => {
+      loader.classList.remove('spinner')
+    })
 }
+
